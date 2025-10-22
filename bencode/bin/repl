@@ -1,0 +1,3 @@
+#!/bin/sh
+
+inim -s src/bencode.nim

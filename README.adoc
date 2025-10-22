@@ -1,0 +1,4 @@
+= nim-days test
+
+以下の写経
+https://xmonader.github.io/nimdays/book_intro.html

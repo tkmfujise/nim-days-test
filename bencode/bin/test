@@ -1,0 +1,5 @@
+#!/bin/sh
+
+
+find . -name "*.nim" | entr -c -p nimble test
+
