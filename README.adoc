@@ -1,4 +1,8 @@
 = nim-days test
+:hardbreaks:
 
 以下の写経
 https://xmonader.github.io/nimdays/book_intro.html
+
+本家リポジトリ
+https://github.com/xmonader/nimdays
