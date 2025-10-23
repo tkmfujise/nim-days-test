@@ -62,3 +62,30 @@ func `==`*(a, b: BencodeType): bool =
       result = true
 
 
+proc encode*(this: Encoder, obj: BencodeType): string
+
+
+proc encode_s(this: Encoder, s: string): string =
+  return $s.len & ":" & s
+
+
+proc encode_i(this: Encoder, i: int): string =
+  return fmt("i{i}e")
+
+
+proc encode_l(this: Encoder, l: seq[BencodeType]): string =
+  var encoded = "l"
+  for el in l:
+    encoded &= this.encode(el)
+  encoded &= "e"
+  return encoded
+
+
+proc encode*(this: Encoder, obj: BencodeType): string =
+  case obj.kind
+  of BencodeKind.btString: this.encode_s(obj.s)
+  of BencodeKind.btInt:    this.encode_i(obj.i)
+  of BencodeKind.btList:   this.encode_l(obj.l)
+  else: ""
+
+

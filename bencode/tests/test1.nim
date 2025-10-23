@@ -1,4 +1,5 @@
 import unittest
+import helper
 import bencode, tables
 
 suite "BencodeKind":
@@ -86,7 +87,21 @@ suite "==":
     check btd4 != btd7
 
 
-suite "Encoder":
-  test "works":
+suite "encode":
+  # See tests/helper.nim
+  test "string":
     let encoder = Encoder.new
+    check encoder.encode(S "Test") == "4:Test"
+    check encoder.encode(S "a b c") == "5:a b c"
+    check encoder.encode(S "あ") == "3:あ"
 
+  test "encode_i":
+    let encoder = Encoder.new 
+    check encoder.encode(I 123) == "i123e"
+    check encoder.encode(I -12) == "i-12e"
+
+  test "encode_l":
+    let encoder = Encoder.new
+    check encoder.encode(L @[S("test")]) == "l4:teste"
+    check encoder.encode(L @[I(123)]) == "li123ee"
+    check encoder.encode(L @[S("F"), I(1)]) == "l1:Fi1ee"
