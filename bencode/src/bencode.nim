@@ -74,11 +74,18 @@ proc encode_i(this: Encoder, i: int): string =
 
 
 proc encode_l(this: Encoder, l: seq[BencodeType]): string =
-  var encoded = "l"
+  result = "l"
   for el in l:
-    encoded &= this.encode(el)
-  encoded &= "e"
-  return encoded
+    result &= this.encode(el)
+  result &= "e"
+
+
+proc encode_d(this: Encoder, d: OrderedTable[BencodeType, BencodeType]): string =
+  result = "d"
+  for k, v in d.pairs():
+    assert k.kind == btString
+    result &= this.encode(k) & this.encode(v)
+  result &= ""
 
 
 proc encode*(this: Encoder, obj: BencodeType): string =
@@ -86,6 +93,6 @@ proc encode*(this: Encoder, obj: BencodeType): string =
   of BencodeKind.btString: this.encode_s(obj.s)
   of BencodeKind.btInt:    this.encode_i(obj.i)
   of BencodeKind.btList:   this.encode_l(obj.l)
-  else: ""
+  of BencodeKind.btDict:   this.encode_d(obj.d)
 
 
