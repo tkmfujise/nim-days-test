@@ -16,6 +16,14 @@ type
   Decoder* = ref object
 
 
+proc `$`*(a: BencodeType): string =
+  case a.kind
+  of btString: fmt("<Bencode {a.s}>")
+  of btInt:    fmt("<Bencode {a.i}>")
+  of btList:   fmt("<Bencode {a.l}>")
+  of btDict:   fmt("<Bencode {a.d}>")
+
+
 proc hash*(obj: BencodeType): Hash =
   case obj.kind
   of btString: !$(hash(obj.s))
@@ -28,7 +36,7 @@ proc hash*(obj: BencodeType): Hash =
     !$(h)
 
 
-proc `==`*(a, b: BencodeType): bool {.noSideEffect.} =
+func `==`*(a, b: BencodeType): bool =
   if a.isNil:
     return b.isNil
   elif b.isNil or a.kind != b.kind:
@@ -54,9 +62,3 @@ proc `==`*(a, b: BencodeType): bool {.noSideEffect.} =
       result = true
 
 
-proc `$`*(a: BencodeType): string =
-  case a.kind
-  of btString: fmt("<Bencode {a.s}>")
-  of btInt:    fmt("<Bencode {a.i}>")
-  of btList:   fmt("<Bencode {a.l}>")
-  of btDict:   fmt("<Bencode {a.d}>")
