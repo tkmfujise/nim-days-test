@@ -64,15 +64,20 @@ func `==`*(a, b: BencodeType): bool =
 
 proc encode*(this: Encoder, obj: BencodeType): string
 
+proc decode*(this: Decoder, source: string): (BencodeType, int)
 
+
+# "foo" => "3:foo"
 proc encode_s(this: Encoder, s: string): string =
   return $s.len & ":" & s
 
 
+# 123 => "i123e"
 proc encode_i(this: Encoder, i: int): string =
   return fmt("i{i}e")
 
 
+# [I 123, S "foo"] => "li123e3:fooe"
 proc encode_l(this: Encoder, l: seq[BencodeType]): string =
   result = "l"
   for el in l:
@@ -96,3 +101,22 @@ proc encode*(this: Encoder, obj: BencodeType): string =
   of BencodeKind.btDict:   this.encode_d(obj.d)
 
 
+# 3:foo => (S "foo", 1)
+proc decode_s*(this: Decoder, s: string): (BencodeType, int) =
+  let prefixpart = s.split(":")[0]
+  let prefixlen = prefixpart.len
+  let bodylen = parseInt(prefixpart)
+  let body = s[prefixlen+1..bodylen+1]
+  let strlen = prefixlen + 1 + bodylen
+  (BencodeType(kind: btString, s: body), strlen)
+
+
+proc decode_i*(this: Decoder, s: string): (BencodeType, int) =
+  let epos = s.find('e')
+  let i = parseInt(s[1..<epos])
+  (BencodeType(kind: btInt, i: i), epos+1)
+
+
+# TODO
+proc decode*(this: Decoder, source: string): (BencodeType, int) =
+  (BencodeType(kind: btInt, i: 1), 1)

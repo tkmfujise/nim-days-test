@@ -105,7 +105,19 @@ suite "encode":
     check encoder.encode(L @[S("test")]) == "l4:teste"
     check encoder.encode(L @[I(123)]) == "li123ee"
     check encoder.encode(L @[S("F"), I(1)]) == "l1:Fi1ee"
+    check encoder.encode(L @[I(123), S("foo")]) == "li123e3:fooe"
 
   test "dict":
     let encoder = Encoder.new
     check encoder.encode(D(S "foo", I 123)) == "d3:fooi123e"
+
+
+suite "decode":
+  test "string":
+    let decoder = Decoder.new
+    check decoder.decode_s("3:foo") == (S "foo", 5)
+    check decoder.decode_s("27:ABCDEFGHIJKLMNOPQRSTUVWXYZ") == (S "ABCDEFGHIJKLMNOPQRSTUVWXYZ", 30)
+
+  test "int":
+    let decoder = Decoder.new
+    check decoder.decode_i("i123e") == (I 123, 5)
