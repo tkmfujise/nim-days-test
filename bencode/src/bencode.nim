@@ -117,6 +117,29 @@ proc decode_i*(this: Decoder, s: string): (BencodeType, int) =
   (BencodeType(kind: btInt, i: i), epos+1)
 
 
+proc decode_l*(this: Decoder, s: string): (BencodeType, int) =
+  var els = newSeq[BencodeType]()
+  var curchar = s[1]
+  var idx = 1
+  while idx < s.len:
+    curchar = s[idx]
+    if curchar == 'e':
+      idx += 1
+      break
+
+    let pair = this.decode(s[idx..<s.len])
+    let obj = pair[0]
+    let nextObjPos = pair[1]
+    els.add obj
+    idx += nextObjPos
+
+  return (BencodeType(kind: btList, l: els), idx)
+
+
+
 # TODO
 proc decode*(this: Decoder, source: string): (BencodeType, int) =
-  (BencodeType(kind: btInt, i: 1), 1)
+  if source[0] == 'i':
+    decode_i(this, source)
+  else:
+    decode_s(this, source)

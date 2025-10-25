@@ -121,3 +121,10 @@ suite "decode":
   test "int":
     let decoder = Decoder.new
     check decoder.decode_i("i123e") == (I 123, 5)
+
+  test "list":
+    let decoder = Decoder.new
+    check decoder.decode_l("l4:teste") == (L @[S("test")], 8)
+    check decoder.decode_l("li123ee") == (L @[I(123)], 7)
+    check decoder.decode_l("l1:Fi1ee") == (L @[S("F"), I(1)], 8)
+    check decoder.decode_l("li123e3:fooe") == (L @[I(123), S("foo")], 12)
