@@ -163,33 +163,17 @@ proc decode_d(this: Decoder, s: string): (BencodeType, int) =
 
 
 proc decode*(this: Decoder, source: string): (BencodeType, int) =
-  var curchar = source[0]
+  var char = source[0]
   var idx = 0
   while idx < source.len:
-    curchar = source[idx]
-    case curchar
-    of 'i':
-      let pair = this.decode_i(source[idx..<source.len])
-      let obj = pair[0]
-      let nextObjPos = pair[1]
-      idx += nextObjPos
-      return (obj, idx)
-    of 'l':
-      let pair = this.decode_l(source[idx..<source.len])
-      let obj = pair[0]
-      let nextObjPos = pair[1]
-      idx += nextObjPos
-      return (obj, idx)
-    of 'd':
-      let pair = this.decode_d(source[idx..<source.len])
-      let obj = pair[0]
-      let nextObjPos = pair[1]
-      idx += nextObjPos
-      return (obj, idx)
-    else:
-      let pair = this.decode_s(source[idx..<source.len])
-      let obj = pair[0] 
-      let nextObjPos = pair[1]
-      idx += nextObjPos
-      return (obj, idx)
+    char = source[idx]
+    let str = source[idx..<source.len]
+    let pair = case char
+      of 'i': this.decode_i(str)
+      of 'l': this.decode_l(str)
+      of 'd': this.decode_d(str)
+      else:   this.decode_s(str)
+    let obj = pair[0]
+    idx += pair[1]
+    return (obj, idx)
 
