@@ -136,6 +136,31 @@ proc decode_l*(this: Decoder, s: string): (BencodeType, int) =
   return (BencodeType(kind: btList, l: els), idx)
 
 
+proc decode_d*(this: Decoder, s: string): (BencodeType, int) =
+  var d = initOrderedTable[BencodeType, BencodeType]()
+  var curchar = s[1]
+  var idx = 1
+  var readingKey = true
+  var curKey: BencodeType
+  while idx < s.len:
+    curchar = s[idx]
+    if curchar == 'e':
+      break
+    let pair = this.decode(s[idx..<s.len])
+    let obj = pair[0]
+    let nextObjPos = pair[1]
+    if readingKey == true:
+      curKey = obj
+      readingKey = false
+    else:
+      d[curKey] = obj
+      readingKey = true
+
+    idx += nextObjPos
+
+  return (BencodeType(kind: btDict, d: d), idx)
+
+
 
 # TODO
 proc decode*(this: Decoder, source: string): (BencodeType, int) =

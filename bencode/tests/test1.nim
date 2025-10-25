@@ -128,3 +128,8 @@ suite "decode":
     check decoder.decode_l("li123ee") == (L @[I(123)], 7)
     check decoder.decode_l("l1:Fi1ee") == (L @[S("F"), I(1)], 8)
     check decoder.decode_l("li123e3:fooe") == (L @[I(123), S("foo")], 12)
+
+  test "dict":
+    let decoder = Decoder.new
+    check decoder.decode_d("d3:fooi123e") == (D(S "foo", I 123), 11)
+
