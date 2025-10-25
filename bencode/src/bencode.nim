@@ -127,13 +127,10 @@ proc decode_l(this: Decoder, s: string): (BencodeType, int) =
     if curchar == 'e':
       idx += 1
       break
-
     let pair = this.decode(s[idx..<s.len])
     let obj = pair[0]
-    let nextObjPos = pair[1]
+    idx += pair[1]
     els.add obj
-    idx += nextObjPos
-
   return (BencodeType(kind: btList, l: els), idx)
 
 
@@ -149,15 +146,13 @@ proc decode_d(this: Decoder, s: string): (BencodeType, int) =
       break
     let pair = this.decode(s[idx..<s.len])
     let obj = pair[0]
-    let nextObjPos = pair[1]
-    if readingKey == true:
+    idx += pair[1]
+    if readingKey:
       curKey = obj
       readingKey = false
     else:
       d[curKey] = obj
       readingKey = true
-
-    idx += nextObjPos
 
   return (BencodeType(kind: btDict, d: d), idx)
 
