@@ -115,12 +115,12 @@ suite "encode":
 suite "decode":
   test "string":
     let decoder = Decoder.new
-    check decoder.decode_s("3:foo") == (S "foo", 5)
-    check decoder.decode_s("27:ABCDEFGHIJKLMNOPQRSTUVWXYZ") == (S "ABCDEFGHIJKLMNOPQRSTUVWXYZ", 30)
+    check decoder.decode("3:foo") == (S "foo", 5)
+    check decoder.decode("27:ABCDEFGHIJKLMNOPQRSTUVWXYZ") == (S "ABCDEFGHIJKLMNOPQRSTUVWXYZ", 30)
 
   test "int":
     let decoder = Decoder.new
-    check decoder.decode_i("i123e") == (I 123, 5)
+    check decoder.decode("i123e") == (I 123, 5)
 
   test "list":
     let decoder = Decoder.new

@@ -102,7 +102,7 @@ proc encode*(this: Encoder, obj: BencodeType): string =
 
 
 # 3:foo => (S "foo", 1)
-proc decode_s*(this: Decoder, s: string): (BencodeType, int) =
+proc decode_s(this: Decoder, s: string): (BencodeType, int) =
   let prefixpart = s.split(":")[0]
   let prefixlen = prefixpart.len
   let bodylen = parseInt(prefixpart)
@@ -111,7 +111,8 @@ proc decode_s*(this: Decoder, s: string): (BencodeType, int) =
   (BencodeType(kind: btString, s: body), strlen)
 
 
-proc decode_i*(this: Decoder, s: string): (BencodeType, int) =
+# i123e => (I 123, 5)
+proc decode_i(this: Decoder, s: string): (BencodeType, int) =
   let epos = s.find('e')
   let i = parseInt(s[1..<epos])
   (BencodeType(kind: btInt, i: i), epos+1)
@@ -159,7 +160,6 @@ proc decode_d*(this: Decoder, s: string): (BencodeType, int) =
     idx += nextObjPos
 
   return (BencodeType(kind: btDict, d: d), idx)
-
 
 
 # TODO
