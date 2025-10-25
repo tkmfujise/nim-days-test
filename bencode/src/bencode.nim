@@ -118,7 +118,7 @@ proc decode_i(this: Decoder, s: string): (BencodeType, int) =
   (BencodeType(kind: btInt, i: i), epos+1)
 
 
-proc decode_l*(this: Decoder, s: string): (BencodeType, int) =
+proc decode_l(this: Decoder, s: string): (BencodeType, int) =
   var els = newSeq[BencodeType]()
   var curchar = s[1]
   var idx = 1
@@ -137,7 +137,7 @@ proc decode_l*(this: Decoder, s: string): (BencodeType, int) =
   return (BencodeType(kind: btList, l: els), idx)
 
 
-proc decode_d*(this: Decoder, s: string): (BencodeType, int) =
+proc decode_d(this: Decoder, s: string): (BencodeType, int) =
   var d = initOrderedTable[BencodeType, BencodeType]()
   var curchar = s[1]
   var idx = 1
@@ -162,9 +162,34 @@ proc decode_d*(this: Decoder, s: string): (BencodeType, int) =
   return (BencodeType(kind: btDict, d: d), idx)
 
 
-# TODO
 proc decode*(this: Decoder, source: string): (BencodeType, int) =
-  if source[0] == 'i':
-    decode_i(this, source)
-  else:
-    decode_s(this, source)
+  var curchar = source[0]
+  var idx = 0
+  while idx < source.len:
+    curchar = source[idx]
+    case curchar
+    of 'i':
+      let pair = this.decode_i(source[idx..<source.len])
+      let obj = pair[0]
+      let nextObjPos = pair[1]
+      idx += nextObjPos
+      return (obj, idx)
+    of 'l':
+      let pair = this.decode_l(source[idx..<source.len])
+      let obj = pair[0]
+      let nextObjPos = pair[1]
+      idx += nextObjPos
+      return (obj, idx)
+    of 'd':
+      let pair = this.decode_d(source[idx..<source.len])
+      let obj = pair[0]
+      let nextObjPos = pair[1]
+      idx += nextObjPos
+      return (obj, idx)
+    else:
+      let pair = this.decode_s(source[idx..<source.len])
+      let obj = pair[0] 
+      let nextObjPos = pair[1]
+      idx += nextObjPos
+      return (obj, idx)
+

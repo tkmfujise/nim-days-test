@@ -124,12 +124,11 @@ suite "decode":
 
   test "list":
     let decoder = Decoder.new
-    check decoder.decode_l("l4:teste") == (L @[S("test")], 8)
-    check decoder.decode_l("li123ee") == (L @[I(123)], 7)
-    check decoder.decode_l("l1:Fi1ee") == (L @[S("F"), I(1)], 8)
-    check decoder.decode_l("li123e3:fooe") == (L @[I(123), S("foo")], 12)
+    check decoder.decode("l4:teste") == (L @[S("test")], 8)
+    check decoder.decode("li123ee") == (L @[I(123)], 7)
+    check decoder.decode("l1:Fi1ee") == (L @[S("F"), I(1)], 8)
+    check decoder.decode("li123e3:fooe") == (L @[I(123), S("foo")], 12)
 
   test "dict":
     let decoder = Decoder.new
-    check decoder.decode_d("d3:fooi123e") == (D(S "foo", I 123), 11)
-
+    check decoder.decode("d3:fooi123e") == (D(S "foo", I 123), 11)
